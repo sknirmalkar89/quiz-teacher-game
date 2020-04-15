@@ -1,0 +1,49 @@
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/content-player/player
+    docker:
+      - image: circleci/node:9.0.0
+    steps:
+      - checkout:
+          path: ~/content-player
+
+      - run: sudo npm install -g grunt-cli@1.2.0
+      - run: npm install
+      - run: npm run build-preview ekstep
+      - run: grunt compress:preview
+      - run: grunt generate-libs
+        #      - run: grunt build-jsdoc
+
+          #
+          #      - run:
+          #          name: running test cases
+          #          command: npm run test-player
+      - run: 
+          name: Install sonar scanner
+          command: 'sudo npm install -g sonarqube-scanner'
+          
+      - run: 
+          name: Sonar scanner
+          command: |
+            sonar-scanner -Dsonar.projectKey=project-sunbird_sunbird-content-player -Dsonar.organization=project-sunbird -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.language=js
+      
+      - run:
+          name: Publish to NPM
+          command: |
+            if [ -z $CIRCLE_PR_NUMBER ]; then 
+              commit_hash=$(echo $CIRCLE_SHA1 | cut -c 1-7)
+              npm version prerelease --preid=alpha-${commit_hash}
+              npm run build-npm-package
+              npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+              npm pack ./www/preview
+              npm publish project-sunbird-content-player-*     
+            else
+              npm run build-npm-package
+            fi
+             
+workflows:
+  version: 2.1
+  build_and_test:
+    jobs:
+      - build

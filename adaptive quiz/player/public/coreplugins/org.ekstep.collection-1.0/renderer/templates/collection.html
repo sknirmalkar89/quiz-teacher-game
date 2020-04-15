@@ -1,0 +1,70 @@
+<style>
+.swiper-background {
+    background: rgb(41, 122, 134);
+    background-size: cover;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 120px;
+    height: 140px;
+    padding: 0 15px;
+    border-radius: 10%;
+    background-color: white;
+    margin-left: 25px !important;
+    margin-bottom: 15px !important;
+    margin-top: 10px !important;
+}
+
+.pane {
+    overflow-y: scroll;
+    overflow-x: scroll;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.header-center{
+    color: #413a36;
+    font-size: 3vw;
+    margin: 4.5% 9%;
+    text-align: center;
+    -webkit-text-stroke: 0.2vh white;
+}
+.text-center{
+    color: #413a36;
+    font-size: 3vw;
+    margin: 2% 10%;
+    text-align: center;
+    -webkit-text-stroke: 0.1vh rgb(22, 18, 18);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(98, 119, 121, 0.78);
+}
+.my-disable{
+    pointer-events:none;
+}
+
+
+</style>
+<ion-pane class="swiper-background" ng-controller="ContentListCtrl" ng-show="showCollection">
+    </br>
+    <div >
+        <h1 class="header-center"> Welcome to the Online Course</h1>
+        <div><label class="header-center">Enter Your Code: <input class ="text-center" type="text" ng-model="teacherCode"></label></div>
+        <h3>{{errorMsg}}</h3>
+    </div>
+    <ion-content class="gc-ionic-contentlist-body"   overflow-scroll="true" style="left: 41%; top: 62%;">
+        <div class="product swiper-slide" ng-class="{'my-disable':teacherCode == undefined || teacherCode == ''}" ng-repeat="story in stories track by $index"  ng-click="playContent(story);">
+            <p class="product_name">{{story.name}}</p>
+            <div class="gc-contentlist-innerdiv">
+                <img class="content-app-icon" ng-src="{{story.appIcon}}"></img>
+                <img class="gc-contentlist-play-icon" ng-src="{{imageBasePath}}icn_play_grey.png"></img>
+            </div>
+        </div>
+    </ion-content>
+</ion-pane>
